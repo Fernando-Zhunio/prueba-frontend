@@ -84,8 +84,8 @@ También puede pasar una función personalizada que devuelva un valor booleano, 
    * @returns retorna una promesa con isConfirmed como boolean
    */
   public static swalConfirmation(
-    title,
-    text,
+    title: string,
+    text: string,
     icon = 'success',
     confirmTexBtnt = 'Si, deseo eliminar',
     cancelTextBtn = 'No, cancelar'

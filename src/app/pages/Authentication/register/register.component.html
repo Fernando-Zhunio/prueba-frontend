@@ -1,3 +1,40 @@
-<p>
-  register works!
-</p>
+<div class="vh-100 center">
+  <div class="col-md-5">
+    <div>
+      <mat-card class="shadow">
+        <mat-card-header>
+          <mat-card-title>Registro</mat-card-title>
+          <!-- <mat-card-subtitle>subtitle</mat-card-subtitle> -->
+        </mat-card-header>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="saveInServer()">
+            <mat-form-field class="w-100" appearance="fill">
+              <input matInput formControlName="name" placeholder="Nombres" >
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+              <input matInput formControlName="email" placeholder="Correo electrónico" >
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Ingrese su contraseña</mat-label>
+              <input formControlName="password" matInput [type]="hide ? 'password' : 'text'">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Repita su contraseña</mat-label>
+              <input formControlName="password_confirmation" matInput [type]="hide ? 'password' : 'text'">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </mat-form-field>
+            <div>
+              <button [disabled]="isLoading" class="me-2" color="primary" mat-raised-button type="submit">Registrarme</button>
+              <button [routerLink]="['/auth/login']" type="button"  [disabled]="isLoading" mat-raised-button type="submit">Ir a iniciar sesión</button>
+            </div>
+          </form>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

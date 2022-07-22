@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Session } from '../clases/session';
-import { User } from '../clases/user';
+import { Session } from '../class/session';
+import { User } from '../class/user';
 import { NgxPermissionsService } from 'ngx-permissions';
-import { Cperson } from '../class/cperson';
+// import { Cperson } from '../class/cperson';
 import { SwalService } from './swal.service';
 
 declare var require: any;
@@ -13,7 +13,7 @@ const CryptoJS = require('crypto-js');
 })
 export class StorageService {
 
-  private currentSession: Session | boolean = null;
+  private currentSession?: Session | null;
 
   constructor(private router: Router, public s_permissionsService: NgxPermissionsService, private activatedRoute: ActivatedRoute) {}
 
@@ -32,11 +32,11 @@ export class StorageService {
     return true;
   }
 
-  setSession(session) {
+  setSession(session: Session) {
     this.currentSession = session;
   }
 
-  setCurrentSession(session): void {
+  setCurrentSession(session: Session): void {
     this.currentSession = session;
     localStorage.setItem('914068895aa792bc7577dab10e7cf4e4', this.encryptedAes(JSON.stringify(session)));
     this.setPermission();
@@ -48,17 +48,14 @@ export class StorageService {
     this.setCurrentSession(session);
   }
 
-  setCompanyUser(id_company) {
-    (this.currentSession as Session).user.company_company_id = id_company;
-    localStorage.setItem('914068895aa792bc7577dab10e7cf4e4', this.encryptedAes(JSON.stringify(this.currentSession)));
-  }
 
-  loadSessionData(): Session | boolean {
+
+  loadSessionData(): Session | null {
     let sessionStr = null;
     try {
-      sessionStr = JSON.parse(this.decryptAes(localStorage.getItem('914068895aa792bc7577dab10e7cf4e4')));
+      sessionStr = JSON.parse(this.decryptAes(localStorage.getItem('914068895aa792bc7577dab10e7cf4e4')) || '');
     } catch (e) {
-      return false;
+      return null;
     }
     return sessionStr;
   }
@@ -69,19 +66,19 @@ export class StorageService {
 
 
 
-  getCurrentUser(): User {
+  getCurrentUser(): User | null{
     const session: Session = this.getCurrentSession();
     return (session && session.user) ? session.user : null;
   }
 
-  getCurrentPerson(): Cperson {
-    const session = this.getCurrentSession();
-    return (session && session.user.person) ? session.user.person : null;
-  }
+  // getCurrentPerson(): Cperson {
+  //   const session = this.getCurrentSession();
+  //   return (session && session.user.person) ? session.user.person : null;
+  // }
 
   setPermission(permissions: any[] = []) {
     const session = this.getCurrentSession();
-    session.user.permission = permissions;
+    session.user.permissions = permissions;
     localStorage.setItem('914068895aa792bc7577dab10e7cf4e4', this.encryptedAes(JSON.stringify(session)));
     this.s_permissionsService.loadPermissions(permissions);
   }
@@ -89,7 +86,8 @@ export class StorageService {
   encryptedAes(text: string): string {
     return CryptoJS.AES.encrypt(text, 'fernando-zhunio-reyes').toString();
   }
-  decryptAes(text: string): string {
+
+  decryptAes(text: any ): string | null {
     if (text) {
       return CryptoJS.AES.decrypt(text, 'fernando-zhunio-reyes').toString(CryptoJS.enc.Utf8);
     }
@@ -97,7 +95,7 @@ export class StorageService {
   }
 
   getPermissionUser(): any[] {
-    const user: User = this.getCurrentUser();
+    const user: any  = this.getCurrentUser();
     return (user) ? user?.permission : null;
   }
 
@@ -105,20 +103,20 @@ export class StorageService {
     return (this.getCurrentToken() != null) ? true : false;
   }
 
-  getCurrentToken(): string {
+  getCurrentToken(): string | null{
     const session = this.getCurrentSession();
     return (session && session.token) ? session.token : null;
   }
 
-  getItemLocalStorage(key): any {
-    return JSON.parse(this.decryptAes(localStorage.getItem(key)));
+  getItemLocalStorage(key: string): any {
+    return JSON.parse(this.decryptAes(localStorage.getItem(key)) || '');
   }
 
-  hasItemLocalStorage(key): boolean {
+  hasItemLocalStorage(key: string): boolean {
     return (localStorage.getItem(key) != null) ? true : false;
   }
 
-  setItemLocalStorage(key, value): void {
+  setItemLocalStorage(key: string, value: any): void {
     localStorage.setItem(key, this.encryptedAes(JSON.stringify(value)));
   }
 
@@ -126,8 +124,8 @@ export class StorageService {
     this.removeCurrentSession();
     this.activatedRoute.data.subscribe(res => {
       console.log(res);
-      if (res?.guard != 'guest') {
-        this.router.navigate(['/login']);
+      if (res?.['guard'] != 'guest') {
+        this.router.navigate(['auth/login']);
       }
     })
   }
@@ -137,12 +135,12 @@ export class StorageService {
     localStorage.clear();
   }
 
-  setUsersChat(users): void {
+  setUsersChat(users: any): void {
     localStorage.setItem('users-chat', this.encryptedAes(JSON.stringify(users)));
   }
 
   getUsersChat(): any {
-    return JSON.parse(this.decryptAes(localStorage.getItem('users-chat')));
+    return JSON.parse(this.decryptAes(localStorage.getItem('users-chat')) || '');
   }
 
 }

@@ -11,7 +11,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import { SwalService } from '../services/swal.service';
 import { StorageService } from '../services/storage.service';
-import { SharedService } from '../services/shared/shared.service';
+// import { SharedService } from '../services/shared/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -21,7 +21,7 @@ declare let Swal: any;
 export class CustomInterceptor implements HttpInterceptor {
   constructor(
     private s_storage: StorageService,
-    public s_shared: SharedService,
+    // public s_shared: SharedService,
     private snack_bar: MatSnackBar,
     private router: Router
   ) {}
@@ -42,11 +42,11 @@ export class CustomInterceptor implements HttpInterceptor {
       });
     }
 
-    if  (SharedService.disabled_loader) {
-      SharedService.disabled_loader = false;
-    } else {
+    // if  (SharedService.disabled_loader) {
+    //   SharedService.disabled_loader = false;
+    // } else {
     this.snack_bar.open('Espere un momento...');
-    }
+    // }
 
     const newResquest = request.clone({ headers });
 
